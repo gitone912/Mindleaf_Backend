@@ -3,7 +3,7 @@ const { createTask, updateTaskCompletion } = require("../controllers/taskControl
 
 const router = express.Router();
 
-router.post("/", createTask);
-router.patch("/:taskId", updateTaskCompletion);
+router.post("/create", createTask);
+router.patch("/complete/:taskId", updateTaskCompletion);
 
 module.exports = router;

@@ -1,9 +1,12 @@
 const express = require("express");
-const { createOrAuthenticateUser, getUserById, updateUserDetails } = require("../controllers/userController");
+const { verifyOtpAndCreateUser,signinUser,signupUser, getUserById, updateUserDetails } = require("../controllers/userController");
 
 const router = express.Router();
 
-router.post("/", createOrAuthenticateUser);
+
+router.post("/sign-in", signinUser);
+router.post("/verify-otp", verifyOtpAndCreateUser);
+router.post("/sign-up", signupUser);
 router.get("/:userId", getUserById);
 router.post("/update", updateUserDetails);
 

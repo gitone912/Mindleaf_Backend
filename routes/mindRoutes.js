@@ -1,9 +1,10 @@
 const express = require("express");
-const { createMindInsight, getMindInsightsByUser } = require("../controllers/mindController");
+const { createMindInsight, getMindInsightsByUser , getMindInsightByUserLatest} = require("../controllers/mindController");
 
 const router = express.Router();
 
-router.post("/", createMindInsight);
-router.get("/:userId", getMindInsightsByUser);
+router.post("/create", createMindInsight);
+router.get("/all/:userId", getMindInsightsByUser);
+router.get("/latest/:userId", getMindInsightByUserLatest);
 
 module.exports = router;
