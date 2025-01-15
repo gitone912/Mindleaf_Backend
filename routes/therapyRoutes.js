@@ -3,7 +3,7 @@ const { createTherapySession, getTherapySessionsByUser } = require("../controlle
 
 const router = express.Router();
 
-router.post("/", createTherapySession);
+router.post("/schedule", createTherapySession);
 router.get("/:userId", getTherapySessionsByUser);
 
 module.exports = router;

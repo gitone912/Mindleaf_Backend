@@ -1,9 +1,12 @@
 const express = require("express");
-const { logMood, getMoodLogsByUser } = require("../controllers/moodController");
+const { getUserMood, updateMood } = require("../controllers/moodController");
 
 const router = express.Router();
 
-router.post("/", logMood);
-router.get("/:userId", getMoodLogsByUser);
+// Get User Mood by userId
+router.get("/:userId", getUserMood);
+
+// Update or Create Mood for a user
+router.post("/update", updateMood);
 
 module.exports = router;
