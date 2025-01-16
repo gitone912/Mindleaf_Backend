@@ -3,20 +3,76 @@ const Journey = require("../models/journeyModel");
 
 const createOrUpdateJourney = async (req, res) => {
   try {
-    const { userId, streak, lastSessionDate, totalSessions } = req.body;
+    const { userId, utcOffset } = req.body;
+
+    if (!userId || utcOffset === undefined) {
+      return res.status(400).json({ error: "User ID and UTC offset are required" });
+    }
 
     const journeyRef = db.ref(`journey/${userId}`);
     const snapshot = await journeyRef.once("value");
+    const currentUTCDate = new Date().toISOString(); // Current UTC time
 
     if (snapshot.exists()) {
-      await journeyRef.update({ streak, last_session_date: lastSessionDate, total_sessions: totalSessions });
-      return res.status(200).json({ message: "Journey updated successfully" });
+      const existingJourney = snapshot.val();
+
+      const { streak, last_session_date } = existingJourney;
+
+      // Convert the last session date to the user's local time
+      const lastSessionDate = last_session_date
+        ? new Date(last_session_date)
+        : null;
+
+      const userLocalDate = new Date(
+        new Date(currentUTCDate).getTime() + utcOffset * 60 * 60 * 1000
+      ).toISOString().split("T")[0]; // Local date as YYYY-MM-DD
+
+      const lastSessionLocalDate = lastSessionDate
+        ? new Date(
+            new Date(lastSessionDate).getTime() + utcOffset * 60 * 60 * 1000
+          )
+            .toISOString()
+            .split("T")[0]
+        : null;
+
+      // Check if it's a new day for the user
+      if (!lastSessionLocalDate || userLocalDate > lastSessionLocalDate) {
+        console.log("New day session", userLocalDate, lastSessionLocalDate);
+        const updatedStreak = streak + 1;
+
+        // Update the journey in the database
+        await journeyRef.update({
+          streak: updatedStreak,
+          last_session_date: currentUTCDate,
+        });
+
+        return res.status(200).json({
+          message: "Journey updated successfully",
+          streak: updatedStreak,
+        });
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Streak not updated. Same day session." });
     }
 
-    const newJourney = new Journey(userId, userId, streak, lastSessionDate, totalSessions);
+    // If no journey exists, create a new one
+    const newJourney = new Journey(
+      userId,
+      userId,
+      1, // Initial streak count
+      currentUTCDate, // Set the current UTC date
+      utcOffset // Store the user's UTC offset
+    );
     await journeyRef.set(newJourney);
-    res.status(201).json({ message: "Journey created successfully", journey: newJourney });
+
+    res.status(201).json({
+      message: "Journey created successfully",
+      journey: newJourney,
+    });
   } catch (error) {
+    console.error("Error in createOrUpdateJourney:", error.message);
     res.status(500).json({ error: error.message });
   }
 };

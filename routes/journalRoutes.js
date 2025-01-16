@@ -1,9 +1,11 @@
 const express = require("express");
-const { createJournal, getJournalsByUser } = require("../controllers/journalController");
+const { createJournal, getJournalsByUser, editJournal, deleteJournal } = require("../controllers/journalController");
 
 const router = express.Router();
 
-router.post("/", createJournal);
+router.post("/create", createJournal);
 router.get("/:userId", getJournalsByUser);
+router.put("/edit/:journalId", editJournal);
+router.delete("/delete/:journalId", deleteJournal);
 
 module.exports = router;

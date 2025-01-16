@@ -3,6 +3,6 @@ const { createOrUpdateJourney } = require("../controllers/journeyController");
 
 const router = express.Router();
 
-router.post("/", createOrUpdateJourney);
+router.post("/update", createOrUpdateJourney);
 
 module.exports = router;
