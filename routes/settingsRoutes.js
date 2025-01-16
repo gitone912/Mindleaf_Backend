@@ -3,6 +3,6 @@ const { createOrUpdateSettings } = require("../controllers/settingsController");
 
 const router = express.Router();
 
-router.post("/", createOrUpdateSettings);
+router.post("/update", createOrUpdateSettings);
 
 module.exports = router;
