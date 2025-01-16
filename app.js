@@ -13,6 +13,7 @@ const moodRoutes = require("./routes/moodRoutes");
 const journeyRoutes = require("./routes/journeyRoutes");
 const journalRoutes = require("./routes/journalRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const GPTRoutes = require("./routes/GPTRoutes");
 
 // Initialize Express App
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/v1/mood", moodRoutes);
 app.use("/api/v1/journey", journeyRoutes);
 app.use("/api/v1/journal", journalRoutes);
 app.use("/api/v1/settings", settingsRoutes);
+app.use("/api/v1/gpt", GPTRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
