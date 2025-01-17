@@ -1,5 +1,5 @@
 const express = require('express');
-const { getGreetings, sendMessage, compileJournal } = require('../helperControllers/GPTResponses');
+const { getGreetings, sendMessage, compileJournal, returnPrompt, returnGratitude } = require('../helperControllers/GPTResponses');
 
 const router = express.Router();
 
@@ -11,5 +11,11 @@ router.post('/sendmessage', sendMessage);
 
 // Route for compiling a journal
 router.post('/compilejournal', compileJournal);
+
+// Route for getting a new prompt
+router.post('/getprompt', returnPrompt);
+
+// Route for getting a gratitude prompt
+router.post('/getgratitude', returnGratitude);
 
 module.exports = router;

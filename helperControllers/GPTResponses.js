@@ -1,6 +1,7 @@
 require("dotenv").config();
 const OpenAI = require("openai");
 const { getPrompt } = require("./system"); // Assuming system.js is in the same directory
+const { PromptModel, GratitudeModel } = require("../models/GPTModel");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -101,8 +102,71 @@ const compileJournal = async (req, res) => {
   }
 };
 
+// 4. Return Prompt
+const returnPrompt = async (req, res) => {
+  const { language, userId } = req.body;
+
+  if (!language || !userId) {
+    return res.status(400).json({ error: "Language and userId are required." });
+  }
+
+  try {
+    const usedPromptsArray = await PromptModel.getUserPrompts(userId);
+
+    const promptGenerationRequest = `Generate a thoughtful journal prompt in ${language}. The prompt should be introspective and help users reflect on their day or life experiences. 
+    DO NOT use any of these previously used prompts: ${JSON.stringify(usedPromptsArray)}.
+    Return only the prompt question, nothing else.`;
+
+    const response = await openai.chat.completions.create({
+      messages: [{ role: "user", content: promptGenerationRequest }],
+      model: "gpt-4",
+    });
+
+    const newPrompt = response.choices[0]?.message?.content;
+    await PromptModel.saveUserPrompt(userId, newPrompt);
+
+    res.json({ prompt: newPrompt });
+  } catch (error) {
+    console.error("Error generating prompt:", error);
+    res.status(500).json({ error: "Failed to generate prompt." });
+  }
+};
+
+// 5. Return Gratitude
+const returnGratitude = async (req, res) => {
+  const { language, userId } = req.body;
+
+  if (!language || !userId) {
+    return res.status(400).json({ error: "Language and userId are required." });
+  }
+
+  try {
+    const usedGratitudeArray = await GratitudeModel.getUserGratitude(userId);
+
+    const gratitudePromptRequest = `Generate a gratitude-focused journal prompt in ${language}. The prompt should help users reflect on positive aspects of their life and express thankfulness. 
+    DO NOT use any of these previously used prompts: ${JSON.stringify(usedGratitudeArray)}.
+    Return only the gratitude question, nothing else.`;
+
+    const response = await openai.chat.completions.create({
+      messages: [{ role: "user", content: gratitudePromptRequest }],
+      model: "gpt-4",
+    });
+
+    const newGratitudePrompt = response.choices[0]?.message?.content;
+    await GratitudeModel.saveUserGratitude(userId, newGratitudePrompt);
+
+    res.json({ prompt: newGratitudePrompt });
+  } catch (error) {
+    console.error("Error generating gratitude prompt:", error);
+    res.status(500).json({ error: "Failed to generate gratitude prompt." });
+  }
+};
+
 module.exports = {
   getGreetings,
   sendMessage,
   compileJournal,
+  returnPrompt,
+  returnGratitude,
 };
+
