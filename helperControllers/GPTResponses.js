@@ -162,11 +162,98 @@ const returnGratitude = async (req, res) => {
   }
 };
 
+// 6. Journal Summary
+const journalSummary = async (req, res) => {
+  const { language, journalEntry } = req.body;
+
+  if (!language || !journalEntry) {
+    return res.status(400).json({ error: "Language and journal entry are required." });
+  }
+
+  const summaryPrompt = `Analyze this journal entry and provide a very concise summary in ${language}. The summary must be exactly 4-5 lines only. Focus on the main emotions, key events, and core thoughts. Be direct and clear.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: summaryPrompt },
+        { role: "user", content: journalEntry }
+      ],
+      model: "gpt-4",
+    });
+
+    const summary = response.choices[0]?.message?.content || "";
+    res.json({ summary });
+  } catch (error) {
+    console.error("Error creating journal summary:", error);
+    res.status(500).json({ error: "Failed to create summary." });
+  }
+};
+
+// 7. Get Keywords
+const getKeywords = async (req, res) => {
+  const { language, journalEntry } = req.body;
+
+  if (!language || !journalEntry) {
+    return res.status(400).json({ error: "Language and journal entry are required." });
+  }
+
+  const keywordPrompt = `Analyze this journal entry and extract exactly 3 keywords in ${language} that best represent the user's personality traits or primary thought patterns. Return only the 3 keywords separated by commas, nothing else.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: keywordPrompt },
+        { role: "user", content: journalEntry }
+      ],
+      model: "gpt-4",
+    });
+
+    const keywords = response.choices[0]?.message?.content || "";
+    res.json({ keywords });
+  } catch (error) {
+    console.error("Error extracting keywords:", error);
+    res.status(500).json({ error: "Failed to extract keywords." });
+  }
+};
+
+// 8. Get Satisfaction Score
+const getSatisfactionScore = async (req, res) => {
+  const { language, journalEntry } = req.body;
+
+  if (!language || !journalEntry) {
+    return res.status(400).json({ error: "Language and journal entry are required." });
+  }
+
+  const scorePrompt = `Based on this journal entry, calculate a life satisfaction score from 0 to 100. Analyze the tone, emotions, and content to determine this score. Return only a number, no other text.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: scorePrompt },
+        { role: "user", content: journalEntry }
+      ],
+      model: "gpt-4",
+    });
+
+    let score = response.choices[0]?.message?.content || "0";
+    // Extract only the number using regex
+    score = score.match(/\d+/)[0];
+    
+    res.json({ satisfactionScore: parseInt(score) });
+  } catch (error) {
+    console.error("Error calculating satisfaction score:", error);
+    res.status(500).json({ error: "Failed to calculate satisfaction score." });
+  }
+};
+
 module.exports = {
   getGreetings,
   sendMessage,
   compileJournal,
   returnPrompt,
   returnGratitude,
+  journalSummary,
+  getKeywords,
+  getSatisfactionScore
 };
 

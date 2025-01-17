@@ -1,4 +1,4 @@
-const { db } = require('../utils/firebaseConfig');
+const db = require("../utils/firebaseConfig");
 
 class PromptModel {
     constructor() {
