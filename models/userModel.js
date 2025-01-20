@@ -1,5 +1,5 @@
 class User {
-    constructor(userId, email, password, name, isOnboarded, notificationTime, notificationDays, coverChoice, points, createdAt, updatedAt) {
+    constructor(userId, email, password, name, isOnboarded, notificationTime, notificationDays, coverChoice, points, subscription, createdAt, updatedAt) {
       this.user_id = userId;
       this.email = email;
       this.password = password;
@@ -9,6 +9,7 @@ class User {
       this.notification_days = notificationDays;
       this.cover_choice = coverChoice;
       this.points = points || 0;
+      this.subscription= subscription || "freeTier";
       this.created_at = createdAt || new Date().toISOString();
       this.updated_at = updatedAt || new Date().toISOString();
     }

@@ -52,7 +52,7 @@ const signupUser = async (req, res) => {
 // Verify OTP and create user
 const verifyOtpAndCreateUser = async (req, res) => {
   try {
-    const { email, otp, password, name } = req.body;
+    const { email, otp, password } = req.body;
 
     // Fetch the OTP entry from the database
     const otpSnapshot = await db.ref(`otps/${email.replace(/\./g, "_")}`).once("value");
@@ -75,12 +75,13 @@ const verifyOtpAndCreateUser = async (req, res) => {
       userId,
       email,
       password,
-      name,
+      "Mindleaf User",
       false, // Default values for new user
       null,
       [],
       1,
       0,
+      "freeTier",
       new Date().toISOString(),
       new Date().toISOString()
     );
@@ -141,7 +142,7 @@ const getUserById = async (req, res) => {
 
 const updateUserDetails = async (req, res) => {
   try {
-    const { userId, isOnboarded, notificationTime, notificationDays, coverChoice, points } = req.body;
+    const { userId, name, isOnboarded, notificationTime, notificationDays, coverChoice, points, subscription } = req.body;
 
     // Check if the user exists
     const snapshot = await db.ref(`users/${userId}`).once("value");
@@ -151,11 +152,13 @@ const updateUserDetails = async (req, res) => {
 
     // Update user details
     const updates = {
+      name: name,
       is_onboarded: isOnboarded,
       notification_time: notificationTime,
       notification_days: notificationDays,
       cover_choice: coverChoice,
       points: points,
+      subscription: subscription,
       updated_at: new Date().toISOString()
     };
 
