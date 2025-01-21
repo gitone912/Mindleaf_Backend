@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Task = require("../models/taskModel");
 
 const createTask = async (req, res) => {

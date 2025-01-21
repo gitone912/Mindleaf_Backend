@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Survey = require("../models/surveyModel");
 
 const createSurvey = async (req, res) => {
@@ -19,6 +19,7 @@ const createSurvey = async (req, res) => {
     await db.ref(`surveys/${surveyId}`).set(newSurvey);
     res.status(201).json({ message: "Survey created successfully", survey: newSurvey });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -34,6 +35,7 @@ const getSurveysByUser = async (req, res) => {
 
     res.status(200).json(snapshot.val());
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };

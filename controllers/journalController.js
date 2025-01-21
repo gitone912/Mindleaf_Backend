@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Journal = require("../models/journalModel");
 
 const createJournal = async (req, res) => {

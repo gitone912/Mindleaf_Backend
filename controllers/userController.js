@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const User = require("../models/userModel");
 const nodemailer = require("nodemailer");
 
@@ -169,4 +169,85 @@ const updateUserDetails = async (req, res) => {
   }
 };
 
-module.exports = { signupUser, verifyOtpAndCreateUser, signinUser, getUserById, updateUserDetails };
+const googleAuth = async (req, res) => {
+  try {
+    const { idToken } = req.body; // Change from token to credential
+
+    if (!idToken) {
+      return res.status(400).json({ 
+        error: "No credential provided" 
+      });
+    }
+
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: idToken,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    if (!ticket) {
+      return res.status(401).json({ 
+        error: "Invalid token" 
+      });
+    }
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Check if user exists
+    const usersSnapshot = await db.ref("users").orderByChild("email").equalTo(email).once("value");
+
+    if (usersSnapshot.exists()) {
+      // User exists - Handle Sign In
+      const userId = Object.keys(usersSnapshot.val())[0];
+      const existingUser = usersSnapshot.val()[userId];
+      return res.status(200).json({
+        message: "Login successful",
+        user: existingUser,
+        isNewUser: false
+      });
+    }
+
+    // User doesn't exist - Handle Sign Up
+    const userId = db.ref("users").push().key;
+    
+    const newUser = new User(
+      userId,
+      email,
+      null,
+      name || "Mindleaf User",
+      false,
+      null,
+      [],
+      1,
+      0,
+      "freeTier",
+      new Date().toISOString(),
+      new Date().toISOString()
+    );
+
+    await db.ref(`users/${userId}`).set(newUser);
+
+    return res.status(201).json({
+      message: "User created successfully",
+      user: newUser,
+      isNewUser: true
+    });
+
+  } catch (error) {
+    console.error('Error in Google authentication:', error);
+    return res.status(500).json({ 
+      error: "Authentication failed", 
+      details: error.message 
+    });
+  }
+};
+
+module.exports = { 
+    signupUser, 
+    verifyOtpAndCreateUser, 
+    signinUser, 
+    getUserById, 
+    updateUserDetails,
+    googleAuth 
+};

@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Settings = require("../models/settingsModel");
 
 const createOrUpdateSettings = async (req, res) => {

@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Journey = require("../models/journeyModel");
 
 const createOrUpdateJourney = async (req, res) => {

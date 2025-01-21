@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Therapy = require("../models/therapyModel");
 const User = require("../models/userModel");
 const nodemailer = require("nodemailer");

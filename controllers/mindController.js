@@ -1,4 +1,4 @@
-const db = require("../utils/firebaseConfig");
+const { db, admin, googleClient } = require("../utils/firebaseConfig");
 const Mind = require("../models/mindModel");
 
 const createMindInsight = async (req, res) => {
