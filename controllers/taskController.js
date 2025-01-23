@@ -66,5 +66,33 @@ const updateTaskCompletion = async (req, res) => {
   }
 };
 
+const getTodaysTasks = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const today = new Date().toISOString().split("T")[0];
 
-module.exports = { createTask, updateTaskCompletion };
+    const tasksRef = db.ref("tasks");
+    const snapshot = await tasksRef
+      .orderByChild("user_id")
+      .equalTo(userId)
+      .once("value");
+
+    if (!snapshot.exists()) {
+      return res.status(200).json({ tasks: [] });
+    }
+
+    const allTasks = [];
+    snapshot.forEach((childSnapshot) => {
+      const task = childSnapshot.val();
+      if (task.date === today) {
+        allTasks.push(task);
+      }
+    });
+
+    res.status(200).json({ tasks: allTasks });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { createTask, updateTaskCompletion, getTodaysTasks };
