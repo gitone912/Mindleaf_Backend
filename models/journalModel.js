@@ -1,8 +1,9 @@
 class Journal {
-  constructor(journalId, userId, type, content, moodEmoji, moodKeywords, summary, actions, createdAt, updatedAt) {
+  constructor(journalId, userId, type, content, originalContent, moodEmoji, moodKeywords, summary, actions, createdAt, updatedAt) {
       this.journal_id = journalId;
       this.user_id = userId;
       this.type = type;
+      this.original_content = originalContent;
       this.content = content;
       this.mood_emoji = moodEmoji;
       this.mood_keywords = moodKeywords || [];

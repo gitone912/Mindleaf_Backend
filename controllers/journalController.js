@@ -3,7 +3,7 @@ const Journal = require("../models/journalModel");
 
 const createJournal = async (req, res) => {
     try {
-        const { userId, type, content, moodEmoji, moodKeywords, summary, actions } = req.body;
+        const { userId, type, content,originalContent, moodEmoji, moodKeywords, summary, actions } = req.body;
         const journalId = db.ref("journal").push().key;
 
         const newJournal = new Journal(
@@ -11,6 +11,7 @@ const createJournal = async (req, res) => {
             userId,
             type,
             content,
+            originalContent,
             moodEmoji,
             moodKeywords,
             summary,
