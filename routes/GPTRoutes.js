@@ -7,7 +7,8 @@ const {
     returnGratitude,
     journalSummary,
     getKeywords,
-    getSatisfactionScore
+    getSatisfactionScore,
+    getRecommendedActions
 } = require('../helperControllers/GPTResponses');
 
 const router = express.Router();
@@ -35,5 +36,8 @@ router.post('/getkeywords', getKeywords);
 
 // Route for getting satisfaction score
 router.post('/satisfactionscore', getSatisfactionScore);
+
+// Route for getting recommended actions
+router.post('/getrecommendedactions', getRecommendedActions);
 
 module.exports = router;

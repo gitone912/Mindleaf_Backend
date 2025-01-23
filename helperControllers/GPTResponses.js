@@ -246,6 +246,39 @@ const getSatisfactionScore = async (req, res) => {
   }
 };
 
+// 9. Get Recommended Actions
+const getRecommendedActions = async (req, res) => {
+  const { language, journalEntry } = req.body;
+
+  if (!language || !journalEntry) {
+    return res.status(400).json({ error: "Language and journal entry are required." });
+  }
+
+  const actionsPrompt = `Based on this journal entry, provide exactly 3 specific, actionable recommendations in ${language} that could help improve the user's wellbeing. Each action should be concise (under 10 words) and practical. Return them in a simple format sepearated by comma. The actions should be directly related to the emotions and situations mentioned in the journal entry.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: actionsPrompt },
+        { role: "user", content: journalEntry }
+      ],
+      model: "gpt-4",
+    });
+
+    const actions = response.choices[0]?.message?.content || "";
+
+    const cleanedActions = actions
+      .split('\n')
+      .map(action => action.replace(/^[^a-zA-Z]*/, '').trim())
+      .filter(action => action.length > 0);
+
+    res.json({ recommendedActions: cleanedActions });
+  } catch (error) {
+    console.error("Error generating recommended actions:", error);
+    res.status(500).json({ error: "Failed to generate recommended actions." });
+  }
+};
+
 module.exports = {
   getGreetings,
   sendMessage,
@@ -254,6 +287,7 @@ module.exports = {
   returnGratitude,
   journalSummary,
   getKeywords,
-  getSatisfactionScore
+  getSatisfactionScore,
+  getRecommendedActions
 };
 
