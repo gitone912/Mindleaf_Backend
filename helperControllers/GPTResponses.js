@@ -254,7 +254,13 @@ const getRecommendedActions = async (req, res) => {
     return res.status(400).json({ error: "Language and journal entry are required." });
   }
 
-  const actionsPrompt = `Based on this journal entry, provide exactly 3 specific, actionable recommendations in ${language} that could help improve the user's wellbeing. Each action should be concise (under 10 words) and practical. Return them in a simple format sepearated by comma. The actions should be directly related to the emotions and situations mentioned in the journal entry.`;
+  const actionsPrompt = `Based on this journal entry, provide exactly 3 specific, actionable recommendations that could help improve the user's wellbeing. 
+  Requirements:
+  - MUST respond ONLY in ${language} language
+  - Each action should be under 10 words
+  - Actions should be practical and directly related to the journal content
+  - Return EXACTLY 3 actions in a single line, separated by commas
+  - DO NOT include numbers, bullets, or any other formatting`;
 
   try {
     const response = await openai.chat.completions.create({
@@ -266,13 +272,13 @@ const getRecommendedActions = async (req, res) => {
     });
 
     const actions = response.choices[0]?.message?.content || "";
+    // Split by comma, trim each action, and filter out empty strings
+    const actionsList = actions.split(',')
+      .map(action => action.trim())
+      .filter(action => action.length > 0)
+      .slice(0, 3); // Ensure exactly 3 items
 
-    const cleanedActions = actions
-      .split('\n')
-      .map(action => action.replace(/^[^a-zA-Z]*/, '').trim())
-      .filter(action => action.length > 0);
-
-    res.json({ recommendedActions: cleanedActions });
+    res.json({ recommendedActions: actionsList.join(', ') });
   } catch (error) {
     console.error("Error generating recommended actions:", error);
     res.status(500).json({ error: "Failed to generate recommended actions." });
