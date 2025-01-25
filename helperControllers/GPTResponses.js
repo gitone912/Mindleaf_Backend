@@ -279,6 +279,35 @@ const getRecommendedActions = async (req, res) => {
   }
 };
 
+// 10. Get Journal Title
+const getJournalTitle = async (req, res) => {
+  const { language, journalEntry } = req.body;
+
+  if (!language || !journalEntry) {
+    return res.status(400).json({ error: "Language and journal entry are required." });
+  }
+
+  const titlePrompt = `Based on this journal entry, generate a concise 2-3 word title in ${language} that captures the main theme or emotion. Return only the title, nothing else. Do not include quotes.`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: titlePrompt },
+        { role: "user", content: journalEntry }
+      ],
+      model: "gpt-4",
+    });
+
+    const title = response.choices[0]?.message?.content || "";
+    // Clean the string by removing quotes and extra whitespace
+    const cleanTitle = title.replace(/['"]+/g, '').trim();
+    res.json({ title: cleanTitle });
+  } catch (error) {
+    console.error("Error generating journal title:", error);
+    res.status(500).json({ error: "Failed to generate journal title." });
+  }
+};
+
 module.exports = {
   getGreetings,
   sendMessage,
@@ -288,6 +317,7 @@ module.exports = {
   journalSummary,
   getKeywords,
   getSatisfactionScore,
-  getRecommendedActions
+  getRecommendedActions,
+  getJournalTitle
 };
 

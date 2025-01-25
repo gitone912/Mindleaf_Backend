@@ -3,23 +3,30 @@ const Settings = require("../models/settingsModel");
 
 const createOrUpdateSettings = async (req, res) => {
     try {
-        const { userId, voiceType, language, therapyType } = req.body;
+        const { userId } = req.body;
+        if (!userId) {
+            return res.status(400).json({ error: "userId is required" });
+        }
 
         const settingsRef = db.ref(`settings/${userId}`);
         const snapshot = await settingsRef.once("value");
 
         if (snapshot.exists()) {
-            const updatedSettings = {
-                voice_type: voiceType,
-                language,
-                therapy_type: therapyType,
-                updated_at: new Date().toISOString()
-            };
-            await settingsRef.update(updatedSettings);
-            return res.status(200).json({ message: "Settings updated successfully", settings: updatedSettings });
+            const updateFields = {};
+            if (req.body.voiceType !== undefined) updateFields.voice_type = req.body.voiceType;
+            if (req.body.language !== undefined) updateFields.language = req.body.language;
+            if (req.body.therapyType !== undefined) updateFields.therapy_type = req.body.therapyType;
+            updateFields.updated_at = new Date().toISOString();
+
+            await settingsRef.update(updateFields);
+            return res.status(200).json({ 
+                message: "Settings updated successfully", 
+                settings: { ...snapshot.val(), ...updateFields }
+            });
         }
 
-        const newSettings = new Settings(userId, userId, voiceType, language, therapyType);
+        // For new settings, use the model's default values
+        const newSettings = new Settings(userId, userId, req.body.voiceType, req.body.language, req.body.therapyType);
         await settingsRef.set(newSettings);
         res.status(201).json({ message: "Settings created successfully", settings: newSettings });
     } catch (error) {

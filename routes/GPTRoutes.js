@@ -8,7 +8,8 @@ const {
     journalSummary,
     getKeywords,
     getSatisfactionScore,
-    getRecommendedActions
+    getRecommendedActions,
+    getJournalTitle
 } = require('../helperControllers/GPTResponses');
 
 const router = express.Router();
@@ -39,5 +40,8 @@ router.post('/satisfactionscore', getSatisfactionScore);
 
 // Route for getting recommended actions
 router.post('/getrecommendedactions', getRecommendedActions);
+
+// Route for getting journal title
+router.post('/getjournaltitle', getJournalTitle);
 
 module.exports = router;

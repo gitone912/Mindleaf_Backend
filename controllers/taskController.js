@@ -4,9 +4,44 @@ const Task = require("../models/taskModel");
 const createTask = async (req, res) => {
   try {
     const { userId, taskName, completion_points } = req.body;
-    const taskId = db.ref("tasks").push().key;
+    const today = new Date().toISOString().split('T')[0];
 
-    const newTask = new Task(taskId, userId, taskName, false, null, completion_points);
+    // Check existing tasks for today
+    const tasksRef = db.ref("tasks");
+    const snapshot = await tasksRef
+      .orderByChild("user_id")
+      .equalTo(userId)
+      .once("value");
+
+    // Count today's tasks
+    let todayTasksCount = 0;
+    if (snapshot.exists()) {
+      snapshot.forEach((childSnapshot) => {
+        const task = childSnapshot.val();
+        if (task.created_at && task.created_at.split('T')[0] === today) {
+          todayTasksCount++;
+        }
+      });
+    }
+
+    // Check if limit exceeded
+    if (todayTasksCount >= 6) {
+      return res.status(400).json({ 
+        error: "Daily task limit reached. You can only create 6 tasks per day." 
+      });
+    }
+
+    // Create new task
+    const taskId = db.ref("tasks").push().key;
+    const newTask = new Task(
+      taskId, 
+      userId, 
+      taskName, 
+      false, 
+      null, 
+      completion_points
+    );
+    newTask.created_at = new Date().toISOString(); // Add creation timestamp
 
     await db.ref(`tasks/${taskId}`).set(newTask);
     res.status(201).json({ message: "Task created successfully", task: newTask });
