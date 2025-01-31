@@ -170,37 +170,48 @@ const updateUserDetails = async (req, res) => {
 };
 
 const googleAuth = async (req, res) => {
+  console.log('Starting Google authentication process');
   try {
-    const { idToken } = req.body; // Change from token to credential
+    const { idToken } = req.body;
+    console.log('Received idToken:', idToken ? 'Token present' : 'Token missing');
 
     if (!idToken) {
+      console.log('Authentication failed: No credential provided');
       return res.status(400).json({ 
         error: "No credential provided" 
       });
     }
 
-    // Verify Google token
+    console.log('Attempting to verify Google token');
     const ticket = await googleClient.verifyIdToken({
       idToken: idToken,
       audience: process.env.GOOGLE_CLIENT_ID
     });
 
     if (!ticket) {
+      console.log('Token verification failed');
       return res.status(401).json({ 
         error: "Invalid token" 
       });
     }
 
     const payload = ticket.getPayload();
+    console.log('Token verified successfully. User payload:', {
+      email: payload.email,
+      name: payload.name,
+      picture: payload.picture ? 'Present' : 'Not present'
+    });
+
     const { email, name, picture } = payload;
 
-    // Check if user exists
+    console.log('Checking if user exists in database');
     const usersSnapshot = await db.ref("users").orderByChild("email").equalTo(email).once("value");
 
     if (usersSnapshot.exists()) {
-      // User exists - Handle Sign In
+      console.log('Existing user found, processing sign in');
       const userId = Object.keys(usersSnapshot.val())[0];
       const existingUser = usersSnapshot.val()[userId];
+      console.log('User signed in successfully:', userId);
       return res.status(200).json({
         message: "Login successful",
         user: existingUser,
@@ -208,7 +219,7 @@ const googleAuth = async (req, res) => {
       });
     }
 
-    // User doesn't exist - Handle Sign Up
+    console.log('New user detected, creating account');
     const userId = db.ref("users").push().key;
     
     const newUser = new User(
@@ -227,6 +238,7 @@ const googleAuth = async (req, res) => {
     );
 
     await db.ref(`users/${userId}`).set(newUser);
+    console.log('New user created successfully:', userId);
 
     return res.status(201).json({
       message: "User created successfully",
@@ -235,7 +247,11 @@ const googleAuth = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error in Google authentication:', error);
+    console.error('Google authentication error:', {
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
     return res.status(500).json({ 
       error: "Authentication failed", 
       details: error.message 
