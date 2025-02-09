@@ -101,10 +101,60 @@ const updateTaskCompletion = async (req, res) => {
   }
 };
 
+const reduceUpdateTaskCompletion = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { isCompleted } = req.body;
+
+    // Fetch the task details
+    const taskRef = db.ref(`tasks/${taskId}`);
+    const taskSnapshot = await taskRef.once("value");
+
+    if (!taskSnapshot.exists()) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    const task = taskSnapshot.val();
+
+    // If marking as incomplete and it's already incomplete, return message
+    if (!isCompleted && !task.is_completed) {
+      return res.status(400).json({ message: "Task is already marked as incomplete" });
+    }
+
+    if (!isCompleted) {
+      // Fetch user details
+      const userRef = db.ref(`users/${task.user_id}`);
+      const userSnapshot = await userRef.once("value");
+
+      if (!userSnapshot.exists()) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const user = userSnapshot.val();
+
+      // Deduct points from user
+      const updatedPoints = Math.max((user.points || 0) - task.completion_points, 0);
+      await userRef.update({ points: updatedPoints, updated_at: new Date().toISOString() });
+
+      // Mark task as incomplete
+      await taskRef.update({ is_completed: false, completed_at: null });
+
+      return res.status(200).json({
+        message: "Task marked as incomplete and points deducted",
+        updatedPoints,
+      });
+    } else {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 const getTodaysTasks = async (req, res) => {
   try {
     const { userId } = req.body;
-    const today = new Date().toISOString().split("T")[0];
 
     const tasksRef = db.ref("tasks");
     const snapshot = await tasksRef
@@ -118,10 +168,7 @@ const getTodaysTasks = async (req, res) => {
 
     const allTasks = [];
     snapshot.forEach((childSnapshot) => {
-      const task = childSnapshot.val();
-      if (task.date === today) {
-        allTasks.push(task);
-      }
+      allTasks.push(childSnapshot.val());
     });
 
     res.status(200).json({ tasks: allTasks });
@@ -130,4 +177,23 @@ const getTodaysTasks = async (req, res) => {
   }
 };
 
-module.exports = { createTask, updateTaskCompletion, getTodaysTasks };
+const deleteTask = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+
+    // Fetch the task details
+    const taskRef = db.ref(`tasks/${taskId}`);
+    const taskSnapshot = await taskRef.once("value");
+
+    if (!taskSnapshot.exists()) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    await taskRef.remove();
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { createTask,  reduceUpdateTaskCompletion,updateTaskCompletion, getTodaysTasks,deleteTask };

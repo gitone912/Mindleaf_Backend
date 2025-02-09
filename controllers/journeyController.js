@@ -93,7 +93,7 @@ const getUserStreak = async (req, res) => {
     }
 
     const journey = snapshot.val();
-    return res.status(200).json({ streak: journey.streak });
+    return res.status(200).json({ streak: journey.streak, last_updated: journey.last_session_date });
   } catch (error) {
     console.error("Error in getUserStreak:", error.message);
     res.status(500).json({ error: error.message });

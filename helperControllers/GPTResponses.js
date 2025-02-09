@@ -15,7 +15,7 @@ const getGreetings = async (req, res) => {
     return res.status(400).json({ error: "Language and voice are required." });
   }
 
-  const prompt = `You are ${voice}, In language ${language}, send a random greeting like this - Hi ${firstname}, I'm ${voice}. Audiosmith's mental health and journaling companion. How do you feel today? Use only ${language} for the response. use your name as ${voice} and users name as ${firstname}.`;
+  const prompt = `You are ${voice}, In language ${language}, send a random greeting like this - Hi ${firstname}, I'm ${voice}. Mindleaf's mental health and journaling companion. How do you feel today? Use only ${language} for the response. use your name as ${voice} and users name as ${firstname}.`;
 
   try {
     const response = await openai.chat.completions.create({
