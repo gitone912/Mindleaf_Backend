@@ -14,6 +14,7 @@ const journeyRoutes = require("./routes/journeyRoutes");
 const journalRoutes = require("./routes/journalRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const GPTRoutes = require("./routes/GPTRoutes");
+const FrequentWordsRoutes = require("./routes/frequentWordsRoutes");
 
 // Initialize Express App
 const app = express();
@@ -34,6 +35,7 @@ app.use("/api/v1/journey", journeyRoutes);
 app.use("/api/v1/journal", journalRoutes);
 app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1/gpt", GPTRoutes);
+app.use("/api/v1/frequent-words", FrequentWordsRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
