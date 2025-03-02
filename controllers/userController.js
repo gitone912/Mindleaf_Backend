@@ -3,15 +3,24 @@ const User = require("../models/userModel");
 const nodemailer = require("nodemailer");
 
 // Setup nodemailer for email sending
+// const transporter = nodemailer.createTransport({
+//   host: "live.smtp.mailtrap.io",
+//   port: 587,
+//   auth: {
+//     user: "api",
+//     pass: "ad25ea12494dcf4d5c87cf8d1e575f9f"
+//   }
+// });
+// ... existing code ...
 const transporter = nodemailer.createTransport({
-  host: "live.smtp.mailtrap.io",
-  port: 587,
+  host: "smtp.gmail.com", // Updated to GoDaddy SMTP host
+  port: 587, // Updated to GoDaddy SMTP port
   auth: {
-    user: "api",
-    pass: "ad25ea12494dcf4d5c87cf8d1e575f9f"
+    user: "ace@eternalmindlabs.xyz", // Updated to GoDaddy SMTP user
+    pass: "obwc ghni oqwm ubxn" // Updated to GoDaddy SMTP password
   }
 });
-
+// ... existing code ...
 // Signup function to generate and send OTP
 const signupUser = async (req, res) => {
   try {
@@ -37,7 +46,7 @@ const signupUser = async (req, res) => {
 
     // Send the OTP to the user's email
     await transporter.sendMail({
-      from: "hi@demomailtrap.com", // Replace with your email
+      from: "noreply@eternalmindlabs.xyz", // Replace with your email
       to: email,
       subject: "Your Signup OTP",
       text: `Your OTP for signup is: ${otp}`,
@@ -46,6 +55,7 @@ const signupUser = async (req, res) => {
     return res.status(200).json({ message: "OTP sent to email" });
   } catch (error) {
     res.status(500).json({ error: error.message });
+    console.log(error)
   }
 };
 
