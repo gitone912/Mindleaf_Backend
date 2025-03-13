@@ -16,6 +16,7 @@ const settingsRoutes = require("./routes/settingsRoutes");
 const GPTRoutes = require("./routes/GPTRoutes");
 const FrequentWordsRoutes = require("./routes/frequentWordsRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const IAPRoutes = require("./routes/IAPRoutes");
 
 
 
@@ -41,6 +42,7 @@ app.use("/api/v1/settings", settingsRoutes);
 app.use("/api/v1/gpt", GPTRoutes);
 app.use("/api/v1/frequent-words", FrequentWordsRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/iap", IAPRoutes);
 
 // Root Route
 app.get("/", (req, res) => {
