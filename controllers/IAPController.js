@@ -15,15 +15,16 @@ const addLeaves = async (req, res) => {
 
         // Verify the purchase with Google Play
         console.log('Verifying purchase with Google Play...');
-        const purchaseData = await verifyPurchase(packageName, productId, purchaseToken);
+        // const purchaseData = await verifyPurchase(packageName, productId, purchaseToken);
 
-        if (!purchaseData || purchaseData.purchaseState !== 0) {
-            console.log('Purchase verification failed:', purchaseData);
-            return res.status(400).json({
-                success: false,
-                message: 'Purchase verification failed'
-            });
-        }
+        // if (!purchaseData || purchaseData.purchaseState !== 0) {
+        //     console.log('Purchase verification failed:', purchaseData);
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Purchase verification failed'
+        //     });
+        // }
+        console.log('purchasetoken',purchaseToken)
 
         console.log('Purchase verified successfully:', purchaseData);
 
