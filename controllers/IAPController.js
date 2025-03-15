@@ -26,7 +26,7 @@ const addLeaves = async (req, res) => {
         // }
         console.log('purchasetoken',purchaseToken)
 
-        console.log('Purchase verified successfully:', purchaseData);
+        console.log('Purchase verified successfully:');
 
         // Get current user data
         const userRef = db.ref(`users/${userId}`);
