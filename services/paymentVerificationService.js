@@ -3,7 +3,7 @@ const fs = require('fs');
 const axios = require('axios');
 
 // Load Google Service Account JSON key
-const serviceAccount = JSON.parse(fs.readFileSync('iap-verification.json'));
+const serviceAccount = JSON.parse(fs.readFileSync('mind-leaf-0378d3536e0c.json'));
 
 // Function to get an OAuth2 token
 async function getAccessToken() {

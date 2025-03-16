@@ -152,7 +152,7 @@ const getUserById = async (req, res) => {
 
 const updateUserDetails = async (req, res) => {
   try {
-    const { userId, name, isOnboarded, notificationTime, notificationDays, coverChoice, points, subscription } = req.body;
+    const { userId, name, isOnboarded, notificationTime, notificationDays, coverChoice } = req.body;
 
     // Check if the user exists
     const snapshot = await db.ref(`users/${userId}`).once("value");
@@ -167,8 +167,8 @@ const updateUserDetails = async (req, res) => {
       notification_time: notificationTime,
       notification_days: notificationDays,
       cover_choice: coverChoice,
-      points: points,
-      subscription: subscription,
+      points: 5,
+      subscription: 'freeTier',
       updated_at: new Date().toISOString()
     };
 

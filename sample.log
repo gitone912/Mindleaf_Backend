@@ -1,0 +1,33 @@
+2025-03-15T12:11:52  Welcome, you are now connected to log-streaming service.Starting Log Tail -n 10 of existing logs ----/appsvctmp/volatile/logs/runtime/container.log
+2025-03-15T12:11:34.3864634Z Purchase verification failed: {
+2025-03-15T12:11:34.3867789Z   error: {
+2025-03-15T12:11:34.3867820Z     code: 401,
+2025-03-15T12:11:34.3867846Z     message: 'The current user has insufficient permissions to perform the requested operation.',
+2025-03-15T12:11:34.3867863Z     errors: [ [Object] ]
+2025-03-15T12:11:34.3867880Z   }
+2025-03-15T12:11:34.3867895Z }
+2025-03-15T12:11:39.9941017Z Server running on http://0.0.0.0:8080
+2025-03-15T12:11:40.9640392Z [0mGET /robots933456.txt [33m404[0m 9.441 ms - 32[0m
+2025-03-15T12:11:47.9707003Z [0mGET /admin/host/status [33m404[0m 0.713 ms - 32[0mEnding Log Tail of existing logs ---Starting Live Log Stream ---
+2025-03-15T12:12:03.2845367Z Terminated
+2025-03-15T12:12:10.7324709Z Received purchase verification request: {
+2025-03-15T12:12:10.7325260Z   userId: '-OKan11PODj-_ugndQ9H',
+2025-03-15T12:12:10.7325294Z   leafAdded: 25,
+2025-03-15T12:12:10.7325312Z   packageName: 'com.mindleaf',
+2025-03-15T12:12:10.7325330Z   productId: 'com.mindleaf.leaves25',
+2025-03-15T12:12:10.7325347Z   purchaseToken: 'Present'
+2025-03-15T12:12:10.7325363Z }
+2025-03-15T12:12:10.7496268Z Error in addLeaves: ReferenceError: purchaseData is not defined
+2025-03-15T12:12:10.7496438Z     at addLeaves (/home/site/wwwroot/controllers/IAPController.js:29:56)
+2025-03-15T12:12:10.7496462Z     at Layer.handle [as handle_request] (/home/site/wwwroot/node_modules/express/lib/router/layer.js:95:5)
+2025-03-15T12:12:10.7496482Z     at next (/home/site/wwwroot/node_modules/express/lib/router/route.js:149:13)
+2025-03-15T12:12:10.7496501Z     at Route.dispatch (/home/site/wwwroot/node_modules/express/lib/router/route.js:119:3)
+2025-03-15T12:12:10.7496522Z     at Layer.handle [as handle_request] (/home/site/wwwroot/node_modules/express/lib/router/layer.js:95:5)
+2025-03-15T12:12:10.7496540Z     at /home/site/wwwroot/node_modules/express/lib/router/index.js:284:15
+2025-03-15T12:12:10.7496559Z     at Function.process_params (/home/site/wwwroot/node_modules/express/lib/router/index.js:346:12)
+2025-03-15T12:12:10.7496579Z     at next (/home/site/wwwroot/node_modules/express/lib/router/index.js:280:10)
+2025-03-15T12:12:10.7496622Z     at Function.handle (/home/site/wwwroot/node_modules/express/lib/router/index.js:175:3)
+2025-03-15T12:12:10.7496643Z     at router (/home/site/wwwroot/node_modules/express/lib/router/index.js:47:12)
+2025-03-15T12:12:10.7496871Z Verifying purchase with Google Play...
+2025-03-15T12:12:10.7496928Z purchasetoken {"orderId":"GPA.3352-0549-2516-13146","packageName":"com.mindleaf","productId":"com.mindleaf.leaves25","purchaseTime":1742040725753,"purchaseState":0,"purchaseToken":"ngodnpcnjcojfjoigigaaeni.AO-J1Oz8WM090wRltVeBrQYkeJfk4AZJOuZZ-dc_EyCSDNetW1XR3x4j_HAnlDTfcsWXA7FttZoK3A0aocW0qmxLeJ6azDVRAA","quantity":1,"acknowledged":false}
+2025-03-15T12:12:10.7912507Z [0mPOST /api/v1/iap/add-leaves [31m500[0m 11.721 ms - 89[0m

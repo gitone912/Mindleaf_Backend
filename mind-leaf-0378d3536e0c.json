@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "mind-leaf",
+  "private_key_id": "0378d3536e0c342df2c575ff5ea88110d472ddcd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDs+lvgeUTxmQIL\nQsH2n+VsI43s7ResoudMURU2H+VgT+LF3tfpsNVJGVPkzJ29QBOX+G1il6LiZVd2\ncTO1wTpHyOvmMzBbE9c1L2GlEAQNLYOMp2qctYhf+1Wxta8k0jn7RuAxLD7J5y/r\neuvWoPWqsP9JB7NUhADt0mXE/0NBD5fOhYePs7m7ZZm2CR9+X06uwCdOxYBAIt1N\nOalecjGW/jQExYJ4S7EgPI2DA6mNA+PsEY+Vnbp0QrXrvpvAd353G4LK2ld/esLr\n1VVfxnVz+U0yNWaMFsKxtNZBbLxQjdFonIZta3o4dAgl/rlEK1LNBqgPx8rFowLr\n40tovd3dAgMBAAECggEACMRQTtMdrlRrQ3BiTZXnvmLoVroEtLHIHcYoIzr12OTL\nrmdKlI4irdQeiunY8g3jS614mnuinn6CSFLyx0gROGOh+n+tS8lFnmWU1q7rf3NO\nGQ9+fbKni2l4Z50hkBqo43dhRuBsqDqBxtPi0qtcu0ZWA2UiCL/jaujsM+f/nHH9\ngXnCHWwAvkNoJmAbXIWrdpVaKM6JSG55soKh1UtYku9CbBwQ1/qX3hHUhifC7a17\nYH6MY4dM2Jir0agsLzZxf49WuPrNe4zM18mAAoJScLk2V/V79yPEBsQeljHnbIX/\nTD+AEV2AdbGO2uSSjTtUs8RgfczKrsjtEwZSRoJRXwKBgQD5d6fxTXQM8EW6xnnQ\nQOqimvC5Djp5hVVSnfnur9O5/uuuvLgoUbA+ulgHk4I8HFsyuVB9l7ELmqqQl2zA\nlvenADeH1GgCmDJeLApbZRo0VnmP6qMeSuK7eoRmSXpycfSLtkAZbb2DsGjJLgJx\nc5OUKfL4+1g2Cx9u0Iw3ulIrUwKBgQDzLvpZr0G3bgg6Zg5cUcc+gJYSAOe5SKJX\nokePL/JECX4GbivEQ0f+wte8r1SLHfCKIga36qJ3o1Hiqw/Tuu83Lig2sTsB0hUW\ntbnJdc6g/CtrbiEm4CSKuRnN20eyhAMJzU63+yHCdJ0cms+fUNe9CvfH+ugBvauP\nCzIx2EbcDwKBgFWlgv8RPFqE0yvAoGmjH+sbjrG59NFruVNX8UrFCse8gWXIXOFa\nykt+5mITfo7snVLY1I2J2rrFKvHhSvED45puNKJphhv97KzwKc4e89QsLCgAwmfQ\nBe+frH0BlQxdmzusIm2Yg4wGsLMBHM2ehHhFvqlEgZBsWSpOZxVq3nMJAoGAOSiV\nl3bmD2NBc9iBD5n5Juu6Wkj0LkywO8Dc6P7wBqXkhUZn6x2VUoAhjSv4xyomW5Fb\n2ua/gTdWC90BP1b02xdyREisAeWLJ2dXX87c3mHnIr0j9atBa4nOUuBznbYBsNAc\n7ImOidI3C34nxt6NltV5H/wNhDs8k8ah6a1YGmkCgYEA1RbE+AQtE1dSTyOezLT8\nWAdxyPEqZ68GFVKu1CSQO1JDfcU+o0kj0qoYSifANvilbTppGjek1l6wxEOi43Rf\ndIQ/FLonrNaJ80mxo3eNwmOkkScQqrnWChrKYE0ubL8yW1xQwKlnZom2OPXN7fcK\n6MY2yM9ZNxjLV/hzBATEYn8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "mindleaf-payment-verification@mind-leaf.iam.gserviceaccount.com",
+  "client_id": "112892190101126859421",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mindleaf-payment-verification%40mind-leaf.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
