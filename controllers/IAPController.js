@@ -13,14 +13,26 @@ const verifyPurchaseWithGoogle = async (packageName, productId, final_token) => 
     try {
         const authClient = await authenticateGooglePlay();
         const androidPublisher = google.androidpublisher({ version: 'v3', auth: authClient });
-        
+
         const response = await androidPublisher.purchases.products.get({
             packageName,
             productId,
             token: final_token
         });
-        
-        return response.data;
+
+        const purchaseData = response.data;
+
+        if (!purchaseData || purchaseData.purchaseState !== 0) {
+            throw new Error('Purchase is not valid or already consumed');
+        }
+
+        // ✅ Ensure purchase is treated as a consumable
+        if (purchaseData.consumptionState === 1) {
+            console.log('Purchase already consumed, allowing re-purchase.');
+            return purchaseData;
+        }
+
+        return purchaseData;
     } catch (error) {
         console.error('Google Play verification error:', error);
         throw new Error('Failed to verify purchase with Google Play');
@@ -85,16 +97,10 @@ const addLeaves = async (req, res) => {
                 message: 'Invalid purchase state'
             });
         }
-        
-        // Ensure purchase is not already consumed
-        if (purchaseData.consumptionState === 1) {
-            console.log('Purchase already consumed:', final_token);
-            return res.status(400).json({
-                success: false,
-                message: 'Purchase already consumed'
-            });
-        }
-        
+
+        // ✅ Allow multiple purchases of the same product (Remove consumption check)
+        console.log('Purchase is valid, proceeding to update user leaves');
+
         // Get current user data
         const userRef = db.ref(`users/${userId}`);
         const userSnapshot = await userRef.once('value');
@@ -139,6 +145,7 @@ const addLeaves = async (req, res) => {
         });
     }
 };
+
 
 const verifySubscription = async (req, res) => {
     try {
