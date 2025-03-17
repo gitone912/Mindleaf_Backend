@@ -9,7 +9,7 @@ const authenticateGooglePlay = async () => {
     return await auth.getClient();
 };
 
-const verifyPurchaseWithGoogle = async (packageName, productId, purchaseToken) => {
+const verifyPurchaseWithGoogle = async (packageName, productId, final_token) => {
     try {
         const authClient = await authenticateGooglePlay();
         const androidPublisher = google.androidpublisher({ version: 'v3', auth: authClient });
@@ -17,7 +17,7 @@ const verifyPurchaseWithGoogle = async (packageName, productId, purchaseToken) =
         const response = await androidPublisher.purchases.products.get({
             packageName,
             productId,
-            token: purchaseToken
+            token: final_token
         });
         
         return response.data;
@@ -44,6 +44,21 @@ const verifySubscriptionWithGoogle = async (packageName, subscriptionId, purchas
         throw new Error('Failed to verify subscription with Google Play');
     }
 };
+const decodeToken = (encodedToken) => {
+    try {
+        // Decode the URL-encoded string
+        const decodedString = decodeURIComponent(encodedToken);
+        
+        // Parse the JSON object
+        const parsedObject = JSON.parse(decodedString);
+
+        // Extract the purchaseToken
+        return parsedObject.purchaseToken;
+    } catch (error) {
+        console.error("Error extracting purchaseToken:", error);
+        return null;
+    }
+};
 
 const addLeaves = async (req, res) => {
     try {
@@ -58,8 +73,9 @@ const addLeaves = async (req, res) => {
         });
 
         console.log('Verifying purchase with Google Play...');
+        const final_token = decodeToken(purchaseToken);
         
-        const purchaseData = await verifyPurchaseWithGoogle(packageName, productId, purchaseToken);
+        const purchaseData = await verifyPurchaseWithGoogle(packageName, productId, final_token);
         console.log('Purchase verification response:', purchaseData);
         
         if (purchaseData.purchaseState !== 0) { // 0 means purchased successfully
@@ -72,7 +88,7 @@ const addLeaves = async (req, res) => {
         
         // Ensure purchase is not already consumed
         if (purchaseData.consumptionState === 1) {
-            console.log('Purchase already consumed:', purchaseToken);
+            console.log('Purchase already consumed:', final_token);
             return res.status(400).json({
                 success: false,
                 message: 'Purchase already consumed'
