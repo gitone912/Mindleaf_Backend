@@ -59,25 +59,25 @@ const addLeaves = async (req, res) => {
 
         console.log('Verifying purchase with Google Play...');
         
-        // const purchaseData = await verifyPurchaseWithGoogle(packageName, productId, purchaseToken);
-        // console.log('Purchase verification response:', purchaseData);
+        const purchaseData = await verifyPurchaseWithGoogle(packageName, productId, purchaseToken);
+        console.log('Purchase verification response:', purchaseData);
         
-        // if (purchaseData.purchaseState !== 0) { // 0 means purchased successfully
-        //     console.log('Invalid purchase state:', purchaseData.purchaseState);
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Invalid purchase state'
-        //     });
-        // }
+        if (purchaseData.purchaseState !== 0) { // 0 means purchased successfully
+            console.log('Invalid purchase state:', purchaseData.purchaseState);
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid purchase state'
+            });
+        }
         
-        // // Ensure purchase is not already consumed
-        // if (purchaseData.consumptionState === 1) {
-        //     console.log('Purchase already consumed:', purchaseToken);
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Purchase already consumed'
-        //     });
-        // }
+        // Ensure purchase is not already consumed
+        if (purchaseData.consumptionState === 1) {
+            console.log('Purchase already consumed:', purchaseToken);
+            return res.status(400).json({
+                success: false,
+                message: 'Purchase already consumed'
+            });
+        }
         
         // Get current user data
         const userRef = db.ref(`users/${userId}`);
