@@ -144,6 +144,21 @@ const getUserById = async (req, res) => {
     }
     const user = snapshot.val();
     delete user.password; // Remove password from the user object
+
+    // Calculate account age in days
+    const createdDate = new Date(user.created_at);
+    const currentDate = new Date();
+    const accountAge = Math.floor((currentDate - createdDate) / (1000 * 60 * 60 * 24));
+    const old_userSubscription = user.subscription;
+
+    // Update subscription based on account age
+    const new_subscription = accountAge > 7 ? "freeTier" : "7daysTrial";
+    if (new_subscription === "freeTier") {
+      user.subscription = old_userSubscription;
+    } else {
+      user.subscription = new_subscription;
+    }
+
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -269,11 +284,35 @@ const googleAuth = async (req, res) => {
   }
 };
 
+const updateUserName = async (req, res) => {
+  try {
+    const { userId, name } = req.body;
+
+    // Check if the user exists
+    const snapshot = await db.ref(`users/${userId}`).once("value");
+    if (!snapshot.exists()) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update only the name
+    const updates = {
+      name: name,
+      updated_at: new Date().toISOString()
+    };
+
+    await db.ref(`users/${userId}`).update(updates);
+    res.status(200).json({ message: "Username updated successfully", updates });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = { 
     signupUser, 
     verifyOtpAndCreateUser, 
     signinUser, 
     getUserById, 
     updateUserDetails,
-    googleAuth 
+    googleAuth,
+    updateUserName 
 };

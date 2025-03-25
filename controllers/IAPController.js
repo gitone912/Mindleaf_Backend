@@ -72,6 +72,19 @@ const decodeToken = (encodedToken) => {
     }
 };
 
+const savePurchaseRecord = async (status, data) => {
+    try {
+        const tableName = status === 'success' ? 'successPurchases' : 'failedPurchases';
+        const purchaseRef = db.ref(tableName).push();
+        await purchaseRef.set({
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error(`Error saving ${status} purchase:`, error);
+    }
+};
+
 const addLeaves = async (req, res) => {
     try {
         const { userId, leafAdded, packageName, productId, purchaseToken } = req.body;
@@ -91,6 +104,7 @@ const addLeaves = async (req, res) => {
         console.log('Purchase verification response:', purchaseData);
         
         if (purchaseData.purchaseState !== 0) { // 0 means purchased successfully
+            await savePurchaseRecord('failed', { userId, leafAdded, packageName, productId, purchaseToken, reason: 'Invalid purchase state' });
             console.log('Invalid purchase state:', purchaseData.purchaseState);
             return res.status(400).json({
                 success: false,
@@ -131,12 +145,26 @@ const addLeaves = async (req, res) => {
 
         console.log('Leaf count updated successfully');
 
+        await savePurchaseRecord('success', {
+            userId,
+            leafAdded,
+            packageName,
+            productId,
+            purchaseToken,
+            newLeafCount,
+            purchaseData
+        });
+
         return res.status(200).json({
             success: true,
             message: 'Leaves added successfully',
             currentLeaves: newLeafCount
         });
     } catch (error) {
+        await savePurchaseRecord('failed', {
+            ...req.body,
+            error: error.message
+        });
         console.error('Error in addLeaves:', error);
         return res.status(500).json({
             success: false,
@@ -200,6 +228,15 @@ const verifySubscription = async (req, res) => {
             updated_at: new Date().toISOString()
         });
 
+        await savePurchaseRecord('success', {
+            userId,
+            packageName,
+            subscriptionName,
+            subscriptionId,
+            purchaseToken,
+            subscriptionExpiry
+        });
+
         return res.status(200).json({
             success: true,
             message: 'Subscription verified and updated successfully',
@@ -207,6 +244,10 @@ const verifySubscription = async (req, res) => {
         });
 
     } catch (error) {
+        await savePurchaseRecord('failed', {
+            ...req.body,
+            error: error.message
+        });
         console.error('Error in verifySubscription:', error);
         return res.status(500).json({
             success: false,
